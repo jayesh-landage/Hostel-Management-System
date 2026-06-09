@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Karmveer Boys Hostel — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+
+<div class="login-bg">
+  <div class="bg-overlay"></div>
+  <div class="floating-shapes">
+    <div class="shape s1"></div>
+    <div class="shape s2"></div>
+    <div class="shape s3"></div>
+    <div class="shape s4"></div>
+  </div>
+</div>
+
+<div class="login-wrapper">
+  <div class="login-brand">
+    <div class="brand-logo">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <rect width="48" height="48" rx="12" fill="#E8A045"/>
+        <path d="M8 36V20L24 10L40 20V36H30V26H18V36H8Z" fill="white"/>
+        <rect x="20" y="28" width="8" height="8" fill="#E8A045"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1>Karmveer Boys Hostel</h1>
+      <p>Smart Room Allocation System</p>
+    </div>
+  </div>
+
+  <div class="login-card">
+    <div class="tab-switcher">
+      <button class="tab-btn active" data-tab="admin">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15c3.314 0 6-1.343 6-3V6c0-1.657-2.686-3-6-3S6 4.343 6 6v6c0 1.657 2.686 3 6 3z"/><path d="M6 12c0 1.657 2.686 3 6 3s6-1.343 6-3"/><path d="M6 15v3c0 1.657 2.686 3 6 3s6-1.343 6-3v-3"/></svg>
+        Admin Login
+      </button>
+      <button class="tab-btn" data-tab="student">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Student Login
+      </button>
+    </div>
+
+    <!-- Admin Login -->
+    <div class="login-form-section active" id="admin-form">
+      <div class="form-header">
+        <h2>Admin Portal</h2>
+        <p>Authorized personnel only</p>
+      </div>
+      <form onsubmit="handleLogin(event,'admin')">
+        <div class="field-group">
+          <label>Username</label>
+          <div class="input-wrap">
+            <svg class="inp-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="admin-user" placeholder="admin1" required autocomplete="username" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <svg class="inp-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="admin-pass" placeholder="••••••••" required autocomplete="current-password" />
+            <button type="button" class="eye-btn" onclick="togglePwd('admin-pass')">👁</button>
+          </div>
+        </div>
+        <div class="hint-box">
+          <strong>Demo Credentials:</strong><br>
+          Admin 1: <code>admin1</code> / <code>admin@123</code><br>
+          Admin 2: <code>admin2</code> / <code>hostel@456</code>
+        </div>
+        <button type="submit" class="login-btn">
+          <span>Sign In as Admin</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Student Login -->
+    <div class="login-form-section" id="student-form">
+      <div class="form-header">
+        <h2>Student Portal</h2>
+        <p>Access your hostel dashboard</p>
+      </div>
+      <form onsubmit="handleLogin(event,'student')">
+        <div class="field-group">
+          <label>Student Login ID</label>
+          <div class="input-wrap">
+            <svg class="inp-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <input type="text" id="stu-user" placeholder="KBH2024001" required autocomplete="username" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <svg class="inp-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="stu-pass" placeholder="••••••••" required autocomplete="current-password" />
+            <button type="button" class="eye-btn" onclick="togglePwd('stu-pass')">👁</button>
+          </div>
+        </div>
+        <div class="hint-box">
+          <strong>Demo Credentials:</strong><br>
+          <code>KBH2024001</code> / <code>stu@123</code><br>
+          <code>KBH2024002</code> / <code>stu@456</code><br>
+          <code>KBH2024003</code> / <code>stu@789</code><br>
+          <code>KBH2024004</code> / <code>stu@321</code>
+        </div>
+        <button type="submit" class="login-btn">
+          <span>Sign In as Student</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <div id="login-error" class="error-msg" style="display:none"></div>
+
+    <!-- Reset button for troubleshooting -->
+    <div style="text-align:center;padding:0 32px 20px">
+      <button onclick="resetData()" style="background:none;border:none;color:#9CA3AF;font-size:0.72rem;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;">
+        🔄 Reset demo data
+      </button>
+    </div>
+  </div>
+
+  <p class="login-footer">© 2024 Karmveer Boys Hostel · All Rights Reserved</p>
+</div>
+
+<!-- Load api.js FIRST, then login.js -->
+<script src="js/api.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

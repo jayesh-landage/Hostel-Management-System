@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API Test</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    #result { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background: #f9f9f9; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>API Connection Test</h1>
+  <button onclick="testAPI()">Test Connection to Backend</button>
+  <div id="result"></div>
+
+  <script>
+    async function testAPI() {
+      const result = document.getElementById('result');
+      result.innerHTML = '<p>Testing...</p>';
+      
+      try {
+        const response = await fetch('http://localhost:8080/api/auth/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: 'admin1', password: 'admin@123' })
+        });
+        
+        const data = await response.json();
+        result.innerHTML = '<p style="color:green;"><strong>✓ Connected!</strong></p><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+      } catch (err) {
+        result.innerHTML = '<p style="color:red;"><strong>✗ Failed:</strong> ' + err.message + '</p><pre>' + err.stack + '</pre>';
+      }
+    }
+  </script>
+</body>
+</html>

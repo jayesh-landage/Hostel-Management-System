@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard — Karmveer Boys Hostel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <style>
+    .wing-tabs { display: flex; gap: 8px; padding: 16px; flex-wrap: wrap; }
+    .wing-tab { padding: 7px 18px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; border: 1.5px solid var(--border); background: white; color: var(--text-2); transition: all 0.2s; }
+    .wing-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .floor-section { margin-bottom: 12px; }
+    .floor-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; padding: 8px 16px 4px; letter-spacing: 0.06em; }
+    .notice-card { border-radius: 12px; padding: 16px 20px; border-left: 4px solid; margin-bottom: 12px; }
+    .notice-high { background: #FEF2F2; border-color: var(--danger); }
+    .notice-medium { background: #FFFBEB; border-color: var(--warning); }
+    .notice-low { background: #F0F9FF; border-color: var(--info); }
+    .student-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,var(--navy),var(--gold)); color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
+    .quick-actions { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+    .quick-action { background: white; border-radius: var(--radius); padding: 18px 14px; text-align: center; cursor: pointer; box-shadow: var(--shadow); transition: all 0.2s; border: 1.5px solid transparent; }
+    .quick-action:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .quick-action .qa-icon { font-size: 28px; margin-bottom: 8px; }
+    .quick-action p { font-size: 0.78rem; font-weight: 600; color: var(--navy); }
+    .progress-bar { height: 8px; background: var(--border); border-radius: 100px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--navy), var(--gold)); transition: width 0.5s ease; }
+    .notif-send-form { display: grid; gap: 12px; }
+    @media(max-width:900px){ .quick-actions{ grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="10" fill="#E8A045"/>
+      <path d="M8 36V20L24 10L40 20V36H30V26H18V36H8Z" fill="white"/>
+    </svg>
+    <div class="sidebar-brand-text">
+      <h2>Karmveer Hostel</h2>
+      <span>Admin Panel</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <button class="nav-item active" onclick="showSection('dashboard')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" onclick="showSection('students')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      All Students
+    </button>
+    <button class="nav-item" onclick="showSection('register')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      Register Student
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Rooms</div>
+    <button class="nav-item" onclick="showSection('rooms')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Room Allocation
+    </button>
+    <button class="nav-item" onclick="showSection('roomview')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Room Map
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Finance</div>
+    <button class="nav-item" onclick="showSection('deposits')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Deposits & Fees
+    </button>
+    <button class="nav-item" onclick="showSection('fines')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Fines
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Management</div>
+    <button class="nav-item" onclick="showSection('accessories')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+      Accessories
+    </button>
+    <button class="nav-item" onclick="showSection('complaints')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Complaints
+    </button>
+    <button class="nav-item" onclick="showSection('gatepass')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Gate Pass
+    </button>
+    <button class="nav-item" onclick="showSection('visitors')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Visitors Log
+    </button>
+    <button class="nav-item" onclick="showSection('mess')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7a7 7 0 0 1-7 7z"/><line x1="11" y1="2" x2="11" y2="4"/></svg>
+      Mess Menu
+    </button>
+    <button class="nav-item" onclick="showSection('events')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Events
+    </button>
+    <button class="nav-item" onclick="showSection('notices')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Notice Board
+    </button>
+    <button class="nav-item" onclick="showSection('notifications')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Send Notifications
+    </button>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <button class="sidebar-logout" onclick="logout()">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Logout
+  </button>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-title">
+    <h1 id="page-title">Dashboard</h1>
+    <p id="page-subtitle">Overview of hostel operations</p>
+  </div>
+  <div class="topbar-right">
+    <!-- Search -->
+    <div class="search-bar">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search students..." id="global-search" oninput="globalSearch(this.value)">
+    </div>
+
+    <!-- Notification Bell -->
+    <div style="position:relative">
+      <button class="notif-btn" onclick="toggleAdminNotif(event)">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge" id="admin-notif-badge">3</span>
+      </button>
+      <div class="notif-dropdown" id="admin-notif-drop" style="display:none">
+        <div class="notif-header">
+          <h3>System Alerts</h3>
+          <button class="notif-clear-btn" onclick="clearAdminNotifs()">Mark all read</button>
+        </div>
+        <div class="notif-list" id="admin-notif-list"></div>
+        <div class="notif-footer"><a href="#" onclick="showSection('notifications')">Manage Notifications →</a></div>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div style="position:relative">
+      <button class="profile-btn" id="admin-profile-btn" onclick="toggleProfileDrop()">
+        <div class="profile-avatar" id="admin-avatar">A</div>
+        <div class="profile-info">
+          <div class="profile-name" id="admin-name">Admin</div>
+          <div class="profile-role" id="admin-role">Warden</div>
+        </div>
+        <svg class="profile-chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="dropdown" id="admin-profile-drop">
+        <div class="dropdown-header">
+          <strong id="admin-dd-name">Admin</strong>
+          <span id="admin-dd-role">Warden</span>
+        </div>
+        <button class="dropdown-item" onclick="showSection('dashboard');closeDrops()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+        <button class="dropdown-item danger" onclick="logout()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- ===== DASHBOARD ===== -->
+  <section class="page-section active" id="sec-dashboard">
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2 id="wb-greeting">Good Morning, Admin!</h2>
+        <p>Here's what's happening at Karmveer Boys Hostel today.</p>
+      </div>
+      <div class="welcome-date">
+        <div class="date-big" id="wb-date">--</div>
+        <div class="date-label" id="wb-day">--</div>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <div class="quick-actions" id="quick-actions">
+      <div class="quick-action" onclick="showSection('register')"><div class="qa-icon">➕</div><p>Register Student</p></div>
+      <div class="quick-action" onclick="showSection('rooms')"><div class="qa-icon">🏠</div><p>Allocate Room</p></div>
+      <div class="quick-action" onclick="showSection('deposits')"><div class="qa-icon">💰</div><p>Add Payment</p></div>
+      <div class="quick-action" onclick="showSection('notices')"><div class="qa-icon">📢</div><p>Post Notice</p></div>
+      <div class="quick-action" onclick="showSection('fines')"><div class="qa-icon">⚠️</div><p>Add Fine</p></div>
+      <div class="quick-action" onclick="showSection('accessories')"><div class="qa-icon">📦</div><p>Issue Items</p></div>
+      <div class="quick-action" onclick="showSection('notifications')"><div class="qa-icon">🔔</div><p>Notify Students</p></div>
+      <div class="quick-action" onclick="showSection('complaints')"><div class="qa-icon">🔧</div><p>View Complaints</p></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🏠 Room Occupancy</div>
+        </div>
+        <div style="padding:20px">
+          <div id="wing-occupancy"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">👥 Recent Registrations</div>
+          <button class="btn btn-outline btn-sm" onclick="showSection('students')">View All</button>
+        </div>
+        <div class="table-wrap">
+          <table id="recent-students-table">
+            <thead><tr><th>Student</th><th>Room</th><th>Status</th></tr></thead>
+            <tbody id="recent-students-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ALL STUDENTS ===== -->
+  <section class="page-section" id="sec-students">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">👥 All Students</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="search-bar">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search..." id="stu-search" oninput="filterStudents(this.value)">
+          </div>
+          <select id="stu-filter-status" onchange="filterStudents()" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;background:#fafafa">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="left">Left</option>
+            <option value="blocked">Blocked</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="showSection('register')">+ Register</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Course/Branch</th><th>Room</th><th>Wing</th><th>Deposit</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="all-students-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== REGISTER STUDENT ===== -->
+  <section class="page-section" id="sec-register">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">➕ Register New Student</div>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">🤖 Smart allocation will automatically assign the best available room based on your preferences.</div>
+        <form id="register-form" onsubmit="registerStudent(event)">
+          <h4 style="margin-bottom:14px;color:var(--navy);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Personal Information</h4>
+          <div class="form-grid">
+            <div class="field"><label>Full Name *</label><input type="text" id="r-name" required placeholder="Arjun Sharma"></div>
+            <div class="field"><label>Registration No. *</label><input type="text" id="r-regno" required placeholder="2024BCE001"></div>
+            <div class="field"><label>Course *</label><select id="r-course"><option>B.Tech</option><option>M.Tech</option><option>B.Sc</option><option>MBA</option><option>Diploma</option></select></div>
+            <div class="field"><label>Branch *</label><input type="text" id="r-branch" required placeholder="Computer Engineering"></div>
+            <div class="field"><label>Year *</label><select id="r-year"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select></div>
+            <div class="field"><label>Mobile No. *</label><input type="tel" id="r-mobile" required placeholder="9876543210"></div>
+            <div class="field"><label>Aadhaar No.</label><input type="text" id="r-aadhaar" placeholder="1234 5678 9012"></div>
+            <div class="field"><label>Admission Date *</label><input type="date" id="r-admdate" required></div>
+            <div class="field"><label>Check-in Date *</label><input type="date" id="r-checkin" required></div>
+            <div class="field"><label>Emergency Contact</label><input type="tel" id="r-emergency" placeholder="9876543200"></div>
+          </div>
+          <div class="field form-full" style="margin-top:8px"><label>Address</label><textarea id="r-address" placeholder="Full address..."></textarea></div>
+
+          <h4 style="margin:20px 0 14px;color:var(--navy);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Parent / Guardian</h4>
+          <div class="form-grid">
+            <div class="field"><label>Parent Name *</label><input type="text" id="r-parent" required placeholder="Rajesh Sharma"></div>
+            <div class="field"><label>Parent Mobile *</label><input type="tel" id="r-pmobile" required placeholder="9876543200"></div>
+          </div>
+
+          <h4 style="margin:20px 0 14px;color:var(--navy);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Room Allocation</h4>
+          <div class="form-grid">
+            <div class="field">
+              <label>Wing Preference</label>
+              <select id="r-wing">
+                <option value="">Auto (Smart Allocation)</option>
+                <option value="A">A Wing</option>
+                <option value="B">B Wing</option>
+                <option value="C">C Wing</option>
+                <option value="D">D Wing</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Floor Preference</label>
+              <select id="r-floor">
+                <option value="">Any Floor</option>
+                <option value="Ground Floor">Ground Floor</option>
+                <option value="1st Floor">1st Floor</option>
+                <option value="2nd Floor">2nd Floor</option>
+                <option value="3rd Floor">3rd Floor</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Manual Room No. (Optional)</label>
+              <input type="text" id="r-manual-room" placeholder="e.g. A-101 (leave blank for auto)">
+            </div>
+          </div>
+
+          <h4 style="margin:20px 0 14px;color:var(--navy);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em">Deposit & Login</h4>
+          <div class="form-grid">
+            <div class="field"><label>Deposit Amount (₹)</label><input type="number" id="r-deposit" value="15000"></div>
+            <div class="field"><label>Amount Paid (₹)</label><input type="number" id="r-paid" value="15000"></div>
+            <div class="field"><label>Login ID (Auto-generated)</label><input type="text" id="r-loginid" readonly placeholder="Will be auto-generated"></div>
+            <div class="field"><label>Password *</label><input type="text" id="r-password" required placeholder="stu@123" value="stu@123"></div>
+          </div>
+
+          <div id="register-alert" style="margin-top:16px"></div>
+
+          <div style="display:flex;gap:12px;margin-top:20px">
+            <button type="submit" class="btn btn-primary">✅ Register & Allocate Room</button>
+            <button type="reset" class="btn btn-outline" onclick="clearRegForm()">🔄 Clear Form</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ROOM ALLOCATION ===== -->
+  <section class="page-section" id="sec-rooms">
+    <div class="two-col" style="margin-bottom:20px">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">🏠 Smart Room Allocator</div></div>
+        <div class="modal-body">
+          <div class="field" style="margin-bottom:12px">
+            <label>Select Student</label>
+            <select id="alloc-student"><option value="">-- Select Student --</option></select>
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label>Wing Preference</label>
+            <select id="alloc-wing" onchange="previewVacant()">
+              <option value="">Auto Select</option>
+              <option value="A">A Wing</option><option value="B">B Wing</option>
+              <option value="C">C Wing</option><option value="D">D Wing</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label>Floor Preference</label>
+            <select id="alloc-floor" onchange="previewVacant()">
+              <option value="">Any Floor</option>
+              <option value="Ground Floor">Ground Floor</option>
+              <option value="1st Floor">1st Floor</option>
+              <option value="2nd Floor">2nd Floor</option>
+              <option value="3rd Floor">3rd Floor</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:16px">
+            <label>Manual Room Override</label>
+            <input type="text" id="alloc-manual" placeholder="e.g. A-201 (leave blank for smart allocation)">
+          </div>
+          <div id="alloc-preview" class="alert alert-info" style="margin-bottom:16px"></div>
+          <button class="btn btn-gold" onclick="doAllocate()" style="width:100%">🎯 Allocate Room</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">🔄 Room Shifting</div></div>
+        <div class="modal-body">
+          <div class="field" style="margin-bottom:12px">
+            <label>Select Student to Shift</label>
+            <select id="shift-student"><option value="">-- Select Student --</option></select>
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label>New Room No.</label>
+            <input type="text" id="shift-room" placeholder="e.g. B-301">
+          </div>
+          <div class="field" style="margin-bottom:16px">
+            <label>Reason for Shift</label>
+            <textarea id="shift-reason" placeholder="Enter reason..." rows="3"></textarea>
+          </div>
+          <button class="btn btn-primary" onclick="doShift()" style="width:100%">↔️ Shift Room</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📋 Room Allocations List</div>
+        <button class="btn btn-outline btn-sm" onclick="showSection('roomview')">View Room Map</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Room No.</th><th>Wing</th><th>Floor</th><th>Student</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="allocation-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ROOM MAP ===== -->
+  <section class="page-section" id="sec-roomview">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">🗺️ Room Map — Wing & Floor View</div>
+        <div style="display:flex;gap:10px;align-items:center;font-size:0.78rem;color:var(--muted)">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#D1FAE5;border-radius:3px;display:inline-block"></span>Vacant</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#FEE2E2;border-radius:3px;display:inline-block"></span>Occupied</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:#FEF3C7;border-radius:3px;display:inline-block"></span>Maintenance</span>
+        </div>
+      </div>
+      <div class="wing-tabs" id="wing-tabs">
+        <button class="wing-tab active" onclick="selectWing('A',this)">A Wing</button>
+        <button class="wing-tab" onclick="selectWing('B',this)">B Wing</button>
+        <button class="wing-tab" onclick="selectWing('C',this)">C Wing</button>
+        <button class="wing-tab" onclick="selectWing('D',this)">D Wing</button>
+      </div>
+      <div id="room-map-content"></div>
+    </div>
+  </section>
+
+  <!-- ===== DEPOSITS ===== -->
+  <section class="page-section" id="sec-deposits">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">💰 Deposit & Payment Management</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline btn-sm" onclick="sendAutoFeeReminders()">🔔 Auto Fee Reminders</button>
+          <button class="btn btn-gold btn-sm" onclick="openDepositModal()">+ Add Payment</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student ID</th><th>Name</th><th>Room</th><th>Total Deposit</th><th>Paid</th><th>Pending</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="deposit-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FINES ===== -->
+  <section class="page-section" id="sec-fines">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">⚠️ Fine Management</div>
+        <button class="btn btn-danger btn-sm" onclick="openFineModal()">+ Add Fine</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Room</th><th>Reason</th><th>Amount</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="fines-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ACCESSORIES ===== -->
+  <section class="page-section" id="sec-accessories">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📦 Accessories / Inventory</div>
+        <button class="btn btn-primary btn-sm" onclick="openAccessoryModal()">+ Issue Item</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Room</th><th>Items Issued</th><th>Issue Date</th><th>Actions</th></tr></thead>
+          <tbody id="accessories-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COMPLAINTS ===== -->
+  <section class="page-section" id="sec-complaints">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">🔧 Complaints / Maintenance</div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Student</th><th>Room</th><th>Issue</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="complaints-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NOTICES ===== -->
+  <section class="page-section" id="sec-notices">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📢 Post Notice</div></div>
+        <div class="modal-body">
+          <form onsubmit="postNotice(event)">
+            <div class="field" style="margin-bottom:12px"><label>Title *</label><input type="text" id="notice-title" required placeholder="Notice title..."></div>
+            <div class="field" style="margin-bottom:12px"><label>Content *</label><textarea id="notice-content" required rows="5" placeholder="Notice content..."></textarea></div>
+            <div class="field" style="margin-bottom:16px">
+              <label>Priority</label>
+              <select id="notice-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
+            </div>
+            <button type="submit" class="btn btn-primary">📢 Post Notice</button>
+          </form>
+        </div>
+      </div>
+      <div>
+        <div class="section-title">📋 All Notices</div>
+        <div id="notices-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NOTIFICATIONS ===== -->
+  <section class="page-section" id="sec-notifications">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">🔔 Send Notification</div></div>
+        <div class="modal-body notif-send-form">
+          <div class="field">
+            <label>Send To</label>
+            <select id="notif-target" onchange="toggleNotifTarget()">
+              <option value="all">All Students</option>
+              <option value="wing">Specific Wing</option>
+              <option value="student">Specific Student</option>
+            </select>
+          </div>
+          <div class="field" id="notif-wing-field" style="display:none">
+            <label>Wing</label>
+            <select id="notif-wing"><option value="A">A Wing</option><option value="B">B Wing</option><option value="C">C Wing</option><option value="D">D Wing</option></select>
+          </div>
+          <div class="field" id="notif-student-field" style="display:none">
+            <label>Student</label>
+            <select id="notif-student-sel"></select>
+          </div>
+          <div class="field">
+            <label>Notification Type</label>
+            <select id="notif-type">
+              <option value="general">General</option>
+              <option value="fee">Fee/Payment</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="fine">Fine</option>
+              <option value="announcement">Announcement</option>
+            </select>
+          </div>
+          <div class="field"><label>Title *</label><input type="text" id="notif-title" required placeholder="Notification title..."></div>
+          <div class="field"><label>Message *</label><textarea id="notif-message" required rows="4" placeholder="Notification message..."></textarea></div>
+          <button class="btn btn-gold" onclick="sendAdminNotif()">🔔 Send Notification</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📊 Notification Log</div></div>
+        <div class="modal-body" id="notif-log">
+          <div class="empty-state"><div class="empty-icon">🔔</div><p>Notifications sent will appear here.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GATE PASS ===== -->
+  <section class="page-section" id="sec-gatepass">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">🛂 Gate Pass Approvals</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Destination</th><th>Reason</th><th>Departure</th><th>Return</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="gatepass-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VISITORS ===== -->
+  <section class="page-section" id="sec-visitors">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">👥 Visitor Logs & Requests</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Visitor Info</th><th>Status</th><th>Time Log</th><th>Actions</th></tr></thead>
+          <tbody id="visitor-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MESS MENU ===== -->
+  <section class="page-section" id="sec-mess">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">🍽️ Update Mess Menu</div></div>
+        <div class="modal-body">
+          <form onsubmit="updateMessMenu(event)">
+            <div class="field" style="margin-bottom:12px">
+              <label>Day of Week</label>
+              <select id="mess-day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select>
+            </div>
+            <div class="field" style="margin-bottom:12px"><label>Breakfast</label><input type="text" id="mess-breakfast" required></div>
+            <div class="field" style="margin-bottom:12px"><label>Lunch</label><input type="text" id="mess-lunch" required></div>
+            <div class="field" style="margin-bottom:16px"><label>Dinner</label><input type="text" id="mess-dinner" required></div>
+            <button type="submit" class="btn btn-primary">Update Menu</button>
+          </form>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📅 Current Weekly Menu</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Day</th><th>Breakfast</th><th>Lunch</th><th>Dinner</th></tr></thead>
+            <tbody id="mess-menu-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EVENTS ===== -->
+  <section class="page-section" id="sec-events">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">🎉 Create Event</div></div>
+        <div class="modal-body">
+          <form onsubmit="createEvent(event)">
+            <div class="field" style="margin-bottom:12px"><label>Event Title *</label><input type="text" id="evt-title" required placeholder="Cricket Tournament"></div>
+            <div class="field" style="margin-bottom:12px"><label>Description *</label><textarea id="evt-desc" required rows="3"></textarea></div>
+            <div class="field" style="margin-bottom:12px"><label>Date *</label><input type="date" id="evt-date" required></div>
+            <div class="field" style="margin-bottom:16px"><label>Category</label><select id="evt-cat"><option>Sports</option><option>Cultural</option><option>Meeting</option></select></div>
+            <button type="submit" class="btn btn-primary">Create Event</button>
+          </form>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">🗓️ Upcoming Events</div></div>
+        <div id="events-list" style="padding:16px;"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODALS -->
+<!-- Deposit Modal -->
+<div class="modal-overlay" id="deposit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Add Payment</h2>
+      <button class="modal-close" onclick="closeModal('deposit-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field" style="margin-bottom:12px">
+        <label>Student</label>
+        <select id="dm-student"></select>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Amount Paid (₹)</label><input type="number" id="dm-amount" placeholder="5000"></div>
+        <div class="field"><label>Payment Date</label><input type="date" id="dm-date"></div>
+        <div class="field"><label>Payment Mode</label><select id="dm-mode"><option>Cash</option><option>UPI</option><option>NEFT</option><option>Cheque</option></select></div>
+        <div class="field"><label>Reference No.</label><input type="text" id="dm-ref" placeholder="UPI/Receipt no."></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('deposit-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="submitPayment()">✅ Confirm Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fine Modal -->
+<div class="modal-overlay" id="fine-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Add Fine</h2>
+      <button class="modal-close" onclick="closeModal('fine-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field" style="margin-bottom:12px"><label>Student</label><select id="fm-student"></select></div>
+      <div class="form-grid">
+        <div class="field"><label>Reason *</label><input type="text" id="fm-reason" placeholder="Late payment / Damage..."></div>
+        <div class="field"><label>Amount (₹)</label><input type="number" id="fm-amount" placeholder="200"></div>
+        <div class="field"><label>Date</label><input type="date" id="fm-date"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('fine-modal')">Cancel</button>
+      <button class="btn btn-danger" onclick="submitFine()">⚠️ Add Fine</button>
+    </div>
+  </div>
+</div>
+
+<!-- Accessory Modal -->
+<div class="modal-overlay" id="accessory-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Issue Accessories</h2>
+      <button class="modal-close" onclick="closeModal('accessory-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field" style="margin-bottom:16px"><label>Student</label><select id="am-student"></select></div>
+      <div class="field"><label>Select Items to Issue</label>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px" id="acc-checkboxes"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('accessory-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAccessories()">📦 Issue Items</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Student Modal -->
+<div class="modal-overlay" id="view-student-modal">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-header">
+      <h2>Student Details</h2>
+      <button class="modal-close" onclick="closeModal('view-student-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="view-student-content"></div>
+  </div>
+</div>
+
+
+
+
+<script src="../js/api.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>

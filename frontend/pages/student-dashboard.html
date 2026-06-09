@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard — Karmveer Boys Hostel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <style>
+    .info-row { display:flex; gap:8px; margin-bottom:10px; align-items:baseline; font-size:0.88rem; }
+    .info-label { font-weight:600; color:var(--navy); min-width:140px; flex-shrink:0; }
+    .info-value { color:var(--text-2); }
+    .room-card { background:linear-gradient(135deg,var(--navy),var(--navy-light)); border-radius:20px; padding:24px; color:white; position:relative; overflow:hidden; }
+    .room-card::before { content:''; position:absolute; right:-30px; top:-30px; width:120px; height:120px; background:rgba(232,160,69,0.2); border-radius:50%; }
+    .room-card::after { content:''; position:absolute; left:60%; bottom:-20px; width:80px; height:80px; background:rgba(255,255,255,0.05); border-radius:50%; }
+    .room-number { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; color:var(--gold); line-height:1; }
+    .timeline { position:relative; padding-left:24px; }
+    .timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background:var(--border); }
+    .timeline-item { position:relative; padding-bottom:20px; }
+    .timeline-dot { position:absolute; left:-20px; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid white; }
+    .acc-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+    .acc-item { background:var(--bg); border-radius:12px; padding:14px 12px; text-align:center; border:1.5px solid var(--border); }
+    .acc-item .acc-icon { font-size:24px; margin-bottom:6px; }
+    .acc-item p { font-size:0.75rem; font-weight:600; color:var(--navy); }
+    .fine-item { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--border); }
+    .change-pwd-form { max-width:400px; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+      <rect width="48" height="48" rx="10" fill="#E8A045"/>
+      <path d="M8 36V20L24 10L40 20V36H30V26H18V36H8Z" fill="white"/>
+    </svg>
+    <div class="sidebar-brand-text">
+      <h2>Karmveer Hostel</h2>
+      <span>Student Portal</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">My Space</div>
+    <button class="nav-item active" onclick="showSection('dashboard')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" onclick="showSection('profile')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      My Profile
+    </button>
+    <button class="nav-item" onclick="showSection('room')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      My Room
+    </button>
+    <button class="nav-item" onclick="showSection('accessories')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+      My Accessories
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Finance</div>
+    <button class="nav-item" onclick="showSection('deposit')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Deposit & Dues
+    </button>
+    <button class="nav-item" onclick="showSection('fines')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+      Fines
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Updates</div>
+    <button class="nav-item" onclick="showSection('notifications')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Notifications
+    </button>
+    <button class="nav-item" onclick="showSection('notices')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+      Notice Board
+    </button>
+    <button class="nav-item" onclick="showSection('complaints')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Complaints
+    </button>
+    <button class="nav-item" onclick="showSection('changepwd')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Change Password
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Campus Life</div>
+    <button class="nav-item" onclick="showSection('gatepass')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Gate Pass
+    </button>
+    <button class="nav-item" onclick="showSection('visitors')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      My Visitors
+    </button>
+    <button class="nav-item" onclick="showSection('mess')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7a7 7 0 0 1-7 7z"/><line x1="11" y1="2" x2="11" y2="4"/></svg>
+      Mess Menu
+    </button>
+    <button class="nav-item" onclick="showSection('events')">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Events
+    </button>
+  </div>
+
+  <div class="sidebar-spacer"></div>
+  <button class="sidebar-logout" onclick="logout()">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Logout
+  </button>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-title">
+    <h1 id="page-title">Dashboard</h1>
+    <p id="page-subtitle">Welcome to your hostel portal</p>
+  </div>
+  <div class="topbar-right">
+    <!-- Notification Bell -->
+    <div style="position:relative">
+      <button class="notif-btn" id="notif-bell-btn" onclick="toggleNotifDrop(event)">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge" id="notif-count" style="display:none">0</span>
+      </button>
+      <div class="notif-dropdown" id="notif-dropdown" style="display:none">
+        <div class="notif-header">
+          <h3>Notifications</h3>
+          <button class="notif-clear-btn" onclick="markAllRead()">Mark all read</button>
+        </div>
+        <div class="notif-list" id="notif-list-drop"></div>
+        <div class="notif-footer">
+          <a href="#" onclick="showSection('notifications');closeDrops()">View All Notifications →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile -->
+    <div style="position:relative">
+      <button class="profile-btn" id="profile-btn" onclick="toggleProfileDrop()">
+        <div class="profile-avatar" id="stu-avatar">S</div>
+        <div class="profile-info">
+          <div class="profile-name" id="stu-name-top">Student</div>
+          <div class="profile-role" id="stu-room-top">Room: --</div>
+        </div>
+        <svg class="profile-chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="dropdown" id="profile-drop">
+        <div class="dropdown-header">
+          <strong id="dd-name">Student</strong>
+          <span id="dd-room">Room: --</span>
+        </div>
+        <button class="dropdown-item" onclick="showSection('profile');closeDrops()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          View Profile
+        </button>
+        <button class="dropdown-item" onclick="showSection('changepwd');closeDrops()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Change Password
+        </button>
+        <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
+        <button class="dropdown-item danger" onclick="logout()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main-content">
+
+  <!-- ===== STUDENT DASHBOARD ===== -->
+  <section class="page-section active" id="sec-dashboard">
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2 id="stu-welcome">Welcome!</h2>
+        <p id="stu-welcome-sub">Loading your hostel details...</p>
+      </div>
+      <div class="welcome-date">
+        <div class="date-big" id="stu-date">--</div>
+        <div class="date-label" id="stu-day">--</div>
+      </div>
+    </div>
+
+    <!-- Quick stats -->
+    <div class="stats-grid" id="stu-stats"></div>
+
+    <div class="two-col">
+      <!-- Room Card -->
+      <div>
+        <div class="room-card">
+          <div style="position:relative;z-index:1">
+            <p style="font-size:0.75rem;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">My Room</p>
+            <div class="room-number" id="stu-room-big">--</div>
+            <p id="stu-wing-floor" style="color:rgba(255,255,255,0.7);margin-top:4px;font-size:0.85rem">Wing · Floor</p>
+            <div style="display:flex;gap:20px;margin-top:20px">
+              <div>
+                <p style="font-size:0.72rem;color:rgba(255,255,255,0.5)">Check-in</p>
+                <p id="stu-checkin-display" style="font-size:0.85rem;font-weight:600">--</p>
+              </div>
+              <div>
+                <p style="font-size:0.72rem;color:rgba(255,255,255,0.5)">Status</p>
+                <span class="badge badge-success" id="stu-status-badge">active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:20px">
+          <div class="panel-header"><div class="panel-title">💰 Payment Overview</div></div>
+          <div style="padding:20px">
+            <div id="stu-payment-overview"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications + Notices -->
+      <div>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">🔔 Recent Notifications</div>
+            <button class="btn btn-outline btn-sm" onclick="showSection('notifications')">View All</button>
+          </div>
+          <div id="stu-recent-notifs"></div>
+        </div>
+
+        <div class="panel" style="margin-top:20px">
+          <div class="panel-header">
+            <div class="panel-title">📢 Latest Notices</div>
+            <button class="btn btn-outline btn-sm" onclick="showSection('notices')">View All</button>
+          </div>
+          <div id="stu-latest-notices" style="padding:12px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROFILE ===== -->
+  <section class="page-section" id="sec-profile">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">👤 My Profile</div>
+        <button class="btn btn-outline btn-sm" onclick="printProfile()">🖨 Print / Download</button>
+      </div>
+      <div class="modal-body" id="profile-content"></div>
+    </div>
+  </section>
+
+  <!-- ===== MY ROOM ===== -->
+  <section class="page-section" id="sec-room">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">🏠 My Room Details</div></div>
+      <div class="modal-body" id="room-content"></div>
+    </div>
+  </section>
+
+  <!-- ===== ACCESSORIES ===== -->
+  <section class="page-section" id="sec-accessories">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">📦 My Accessories</div></div>
+      <div class="modal-body">
+        <div class="alert alert-info" style="margin-bottom:16px">Items issued to you by the hostel administration. Report any damage to the warden office.</div>
+        <div class="acc-grid" id="stu-acc-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DEPOSIT ===== -->
+  <section class="page-section" id="sec-deposit">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">💰 Deposit Details</div></div>
+        <div class="modal-body" id="stu-deposit-content"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📅 Payment Deadlines</div></div>
+        <div class="modal-body">
+          <div class="alert alert-warning">🗓 Monthly hostel fee is due by the <strong>10th</strong> of every month. Late payment attracts a fine of ₹100/day.</div>
+          <div class="timeline" style="margin-top:16px" id="stu-timeline"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FINES ===== -->
+  <section class="page-section" id="sec-fines">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">⚠️ My Fines</div></div>
+      <div id="stu-fines-content"></div>
+    </div>
+  </section>
+
+  <!-- ===== NOTIFICATIONS ===== -->
+  <section class="page-section" id="sec-notifications">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">🔔 All Notifications</div>
+        <button class="btn btn-outline btn-sm" onclick="markAllRead()">✅ Mark All Read</button>
+      </div>
+      <div id="all-notifs-content"></div>
+    </div>
+  </section>
+
+  <!-- ===== NOTICES ===== -->
+  <section class="page-section" id="sec-notices">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">📢 Notice Board</div></div>
+      <div class="modal-body" id="stu-notices-content"></div>
+    </div>
+  </section>
+
+  <!-- ===== COMPLAINTS ===== -->
+  <section class="page-section" id="sec-complaints">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">➕ File Complaint</div></div>
+        <div class="modal-body">
+          <form onsubmit="fileComplaint(event)">
+            <div class="field" style="margin-bottom:12px"><label>Issue Title *</label><input type="text" id="c-title" required placeholder="e.g. Tap leaking, Light not working"></div>
+            <div class="field" style="margin-bottom:12px"><label>Description *</label><textarea id="c-desc" required rows="4" placeholder="Describe the issue in detail..."></textarea></div>
+            <button type="submit" class="btn btn-primary">📩 Submit Complaint</button>
+          </form>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📋 My Complaints</div></div>
+        <div id="my-complaints-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHANGE PASSWORD ===== -->
+  <section class="page-section" id="sec-changepwd">
+    <div class="panel" style="max-width:500px">
+      <div class="panel-header"><div class="panel-title">🔐 Change Password</div></div>
+      <div class="modal-body">
+        <form onsubmit="changePassword(event)" class="change-pwd-form">
+          <div class="field" style="margin-bottom:14px"><label>Current Password *</label><input type="password" id="cp-old" required></div>
+          <div class="field" style="margin-bottom:14px"><label>New Password *</label><input type="password" id="cp-new" required></div>
+          <div class="field" style="margin-bottom:20px"><label>Confirm New Password *</label><input type="password" id="cp-confirm" required></div>
+          <div id="cp-msg"></div>
+          <button type="submit" class="btn btn-primary">🔐 Update Password</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GATE PASS ===== -->
+  <section class="page-section" id="sec-gatepass">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">🛂 Apply for Gate Pass</div></div>
+        <div class="modal-body">
+          <form onsubmit="applyGatePass(event)">
+            <div class="field" style="margin-bottom:12px"><label>Destination *</label><input type="text" id="gp-dest" required></div>
+            <div class="field" style="margin-bottom:12px"><label>Reason *</label><input type="text" id="gp-reason" required></div>
+            <div class="field" style="margin-bottom:12px"><label>Departure Date *</label><input type="date" id="gp-dep" required></div>
+            <div class="field" style="margin-bottom:16px"><label>Return Date *</label><input type="date" id="gp-ret" required></div>
+            <button type="submit" class="btn btn-primary">Submit Application</button>
+          </form>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📋 My Gate Passes</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Destination</th><th>Dates</th><th>Status</th></tr></thead>
+            <tbody id="my-gatepass-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MY VISITORS ===== -->
+  <section class="page-section" id="sec-visitors">
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">👥 Request Visitor Pass</div></div>
+        <div class="modal-body">
+          <form onsubmit="applyVisitorPass(event)">
+            <div class="field" style="margin-bottom:12px"><label>Visitor Name *</label><input type="text" id="v-name" required></div>
+            <div class="field" style="margin-bottom:12px"><label>Relation *</label><input type="text" id="v-rel" required></div>
+            <div class="field" style="margin-bottom:16px"><label>Contact Number *</label><input type="text" id="v-contact" required></div>
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+          </form>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📋 My Visitors</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Visitor Name</th><th>In/Out</th><th>Status</th></tr></thead>
+            <tbody id="my-visitors-list"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MESS MENU ===== -->
+  <section class="page-section" id="sec-mess">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">🍽️ Weekly Mess Menu</div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Day</th><th>Breakfast</th><th>Lunch</th><th>Dinner</th></tr></thead>
+          <tbody id="student-mess-list"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EVENTS ===== -->
+  <section class="page-section" id="sec-events">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">🎉 Upcoming Events</div></div>
+      <div id="student-events-list" style="padding:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<script src="../js/api.js"></script>
+<script src="../js/student.js"></script>
+</body>
+</html>
