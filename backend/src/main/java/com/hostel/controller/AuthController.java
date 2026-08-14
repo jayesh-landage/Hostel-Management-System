@@ -66,4 +66,9 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> logout() {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully."));
     }
+
+    @GetMapping("/test")
+public ResponseEntity<Map<String, String>> test() {
+    return ResponseEntity.ok(Map.of("message", "Hostel Backend is running successfully"));
+}
 }
