@@ -1,6 +1,6 @@
 // api.js — Central API helper for all backend calls
-// Base URL: http://localhost:8080/api
-const API_BASE = 'http://localhost:8080/api';
+// Base URL: https://karmveer-boys-hostel-s1t1.onrender.com
+const API_BASE = 'https://karmveer-boys-hostel-s1t1.onrender.com/api';
 
 // ---- Get auth headers ----
 function getHeaders() {

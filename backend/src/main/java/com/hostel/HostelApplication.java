@@ -96,7 +96,7 @@ public class HostelApplication {
                 ));
             }
 
-            System.out.println("[READY] Backend running at http://localhost:8080");
+            System.out.println("[READY] Backend running at https://karmveer-boys-hostel-s1t1.onrender.com");
             System.out.println("[DB]    MongoDB: karmveer_hostel");
             System.out.println("[API]   Students: " + studentRepo.count());
             System.out.println("[API]   Rooms:    " + roomRepo.count());
